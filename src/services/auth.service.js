@@ -1,8 +1,8 @@
 const Token = require("../models/token.model.js");
 const Credential = require("../models/credential.model.js");
 
-const crypto = require("crypto");
 const bcrypt = require("bcrypt");
+const crypto = require("node:crypto");
 
 async function registerUser(username, password, role) {
     const pepper = generatePepper();
@@ -151,4 +151,5 @@ module.exports = {
     refreshTokenExist,
     createRefreshToken,
     revokeRefreshToken,
+    generatePepper,
 };
