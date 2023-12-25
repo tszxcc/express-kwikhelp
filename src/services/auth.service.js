@@ -28,16 +28,33 @@ async function loginUser(username, password) {
     if (
         verifyPassword(password, passwordHash.pepper, passwordHash.passwordHash)
     ) {
-        return true;
+        const role = (
+            await Credential.findOne({ username: username }).select("role")
+        ).role;
+
+        return role;
     }
 
     return false;
 }
 
-async function refreshTokenExist(username, token) {
-    const tokenExist = await Token.exists({ username: username, token: token });
+async function refreshTokenExist(token) {
+    const tokenExist = await Token.exists({ token: token });
     if (tokenExist) {
-        return true;
+        const username = (
+            await Token.findOne({ token: token }).select("username")
+        ).username;
+
+        const role = (
+            await Credential.findOne({
+                username: username,
+            }).select("role")
+        ).role;
+
+        return {
+            username: username,
+            role: role,
+        };
     }
 
     return false;
@@ -65,9 +82,8 @@ async function createRefreshToken(username) {
     return refreshToken;
 }
 
-async function revokeRefreshToken(username, token) {
+async function revokeRefreshToken(token) {
     const tokenDelete = await Token.deleteOne({
-        username: username,
         token: token,
     });
 

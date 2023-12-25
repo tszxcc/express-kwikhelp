@@ -1,13 +1,14 @@
-const jwt = require('jsonwebtoken');
-const jwtConfig = require('../configs/jwt.config.js');
+const jwt = require("jsonwebtoken");
+const jwtConfig = require("../configs/jwt.config.js");
 
-function generateAccessToken(username, lifetime) {
+function generateAccessToken(username, role, lifetime) {
     if (lifetime === undefined) {
-        lifetime = (1000 * 60 * 60);
-    };
+        lifetime = 1000 * 60 * 60;
+    }
 
     const payload = {
         username: username,
+        role: role,
     };
 
     return jwt.sign(payload, jwtConfig.jwtSecret, { expiresIn: lifetime });

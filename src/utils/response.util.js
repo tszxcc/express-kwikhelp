@@ -2,7 +2,7 @@ function addCookie(res, cookieName, cookieValue, cookieAge) {
     res.cookie(cookieName, cookieValue, {
         httpOnly: true,
         maxAge: cookieAge,
-    })
+    });
 }
 
 function removeCookie(res, cookieName) {
@@ -12,4 +12,4 @@ function removeCookie(res, cookieName) {
 module.exports = {
     addCookie,
     removeCookie,
-}
+};

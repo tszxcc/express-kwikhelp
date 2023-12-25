@@ -9,9 +9,9 @@ router.post("/register", authController.register);
 router.post("/logout", authController.logout);
 
 // check access token
-router.post("/access", authController.access);
+router.get("/access", authController.access);
 // checl refresh token
-router.post("/refresh", authController.refresh);
+router.get("/refresh", authController.refresh);
 
 router.get("/check", authMiddleware.authorize, authController.check);
 

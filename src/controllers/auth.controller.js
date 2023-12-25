@@ -10,6 +10,13 @@ const responseUtil = require("../utils/response.util.js");
 async function login(req, res) {
     const { username, password } = req.body;
 
+    if (!username || !password) {
+        res.status(httpStatus.BAD_USER_INPUT);
+
+        res.send({ message: "Missing field/s" });
+        return;
+    }
+
     if (!(await authService.userExist(username))) {
         res.status(httpStatus.BAD_USER_INPUT);
 
@@ -17,9 +24,16 @@ async function login(req, res) {
         return;
     }
 
-    if (await authService.loginUser(username, password)) {
+    const loginSuccess = await authService.loginUser(username, password);
+
+    if (loginSuccess) {
+        // if login success, create refresh token and access token
         const refreshToken = await authService.createRefreshToken(username);
-        const accessToken = accessTokenUtil.generateAccessToken(username);
+
+        const accessToken = accessTokenUtil.generateAccessToken(
+            username,
+            loginSuccess
+        );
 
         responseUtil.addCookie(
             res,
@@ -36,6 +50,7 @@ async function login(req, res) {
 
         res.status(httpStatus.OK);
     } else {
+        // if login failed, send 401
         res.status(httpStatus.UNAUTHORIZED);
     }
 
@@ -43,12 +58,26 @@ async function login(req, res) {
 }
 
 async function register(req, res) {
-    const { username, password, confirmPassword } = req.body;
+    const { username, password, confirmPassword, role } = req.body;
+
+    if (!username || !password || !confirmPassword || !role) {
+        res.status(httpStatus.BAD_USER_INPUT);
+
+        res.send({ message: "Missing field/s" });
+        return;
+    }
 
     if (password !== confirmPassword) {
         res.status(httpStatus.BAD_USER_INPUT);
 
         res.send({ message: "Passwords do not match" });
+        return;
+    }
+
+    if (role !== "helper" && role !== "user") {
+        res.status(httpStatus.BAD_USER_INPUT);
+
+        res.send({ message: "Role not valid" });
         return;
     }
 
@@ -59,7 +88,7 @@ async function register(req, res) {
         return;
     }
 
-    if (await authService.createUser(username, password)) {
+    if (await authService.registerUser(username, password, role)) {
         res.status(httpStatus.OK);
         res.end();
         return;
@@ -93,7 +122,7 @@ function access(req, res) {
     res.end();
 }
 
-function refresh(req, res) {
+async function refresh(req, res) {
     const refreshToken = req.cookies[cookieName.refreshToken];
 
     if (!refreshToken) {
@@ -102,7 +131,7 @@ function refresh(req, res) {
         return;
     }
 
-    if (!authService.refreshTokenExist(refreshToken)) {
+    if (!(await authService.refreshTokenExist(refreshToken))) {
         res.status(httpStatus.UNAUTHORIZED);
         res.send({ message: "Refresh token not valid" });
         return;
@@ -114,7 +143,14 @@ function refresh(req, res) {
 
 function check(req, res) {
     res.status(httpStatus.OK);
-    res.send({ message: "Hi " + req.username + ", this's a private route." });
+    res.send({
+        message:
+            "Hi " +
+            req.username +
+            " (" +
+            req.role +
+            "), this's a private route.",
+    });
     res.end();
 }
 
