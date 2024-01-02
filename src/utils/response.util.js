@@ -2,6 +2,7 @@ function addCookie(res, cookieName, cookieValue, cookieAge) {
     res.cookie(cookieName, cookieValue, {
         httpOnly: true,
         maxAge: cookieAge,
+        sameSite: "none",
     });
 }
 
