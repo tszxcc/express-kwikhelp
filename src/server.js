@@ -21,7 +21,7 @@ const originDomains = [
 app.use(
     cors({
         origin: originDomains,
-        optionsSuccessStatus: 200,
+        credentials: true,
     })
 );
 
