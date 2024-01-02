@@ -58,9 +58,17 @@ async function login(req, res) {
 }
 
 async function register(req, res) {
-    const { username, password, confirmPassword, role } = req.body;
+    const { username, email, password, confirmPassword, phone, role } =
+        req.body;
 
-    if (!username || !password || !confirmPassword || !role) {
+    if (
+        !username ||
+        !email ||
+        !password ||
+        !confirmPassword ||
+        !phone ||
+        !role
+    ) {
         res.status(httpStatus.BAD_USER_INPUT);
 
         res.send({ message: "Missing field/s" });
@@ -81,14 +89,16 @@ async function register(req, res) {
         return;
     }
 
-    if (await authService.userExist(username)) {
+    if (await authService.userExist(username, email)) {
         res.status(httpStatus.BAD_USER_INPUT);
 
         res.send({ message: "User already exist" });
         return;
     }
 
-    if (await authService.registerUser(username, password, role)) {
+    if (
+        await authService.registerUser(username, password, role, email, phone)
+    ) {
         res.status(httpStatus.OK);
         res.end();
         return;

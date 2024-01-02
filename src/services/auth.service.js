@@ -4,7 +4,7 @@ const Credential = require("../models/credential.model.js");
 const bcrypt = require("bcrypt");
 const crypto = require("node:crypto");
 
-async function registerUser(username, password, role) {
+async function registerUser(username, password, role, email, phone) {
     const pepper = generatePepper();
     const passwordHash = hashPassword(password, pepper);
 
@@ -13,6 +13,8 @@ async function registerUser(username, password, role) {
         role: role,
         passwordHash: passwordHash,
         pepper: pepper,
+        email: email,
+        phone: phone,
     });
 
     await credential.save();
@@ -94,8 +96,14 @@ async function revokeRefreshToken(token) {
     return true;
 }
 
-async function userExist(username) {
-    const exist = await Credential.exists({ username: username });
+async function userExist(username, email) {
+    var exist;
+    if (email) {
+        exist = await Credential.exists({ username: username, email: email });
+    } else {
+        exist = await Credential.exists({ username: username });
+    }
+
     if (exist) {
         return true;
     }

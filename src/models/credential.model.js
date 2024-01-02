@@ -18,6 +18,14 @@ const credential = mongoose.Schema(
             type: String,
             required: [true, "Please add a text value to the pepper"],
         },
+        email: {
+            type: String,
+            required: [true, "Please add a text value to the email"],
+        },
+        phone: {
+            type: String,
+            required: [true, "Please add a text value to the phone"],
+        },
     },
     {
         timestamps: true,
