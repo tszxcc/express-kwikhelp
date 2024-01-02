@@ -3,7 +3,7 @@ function addCookie(res, cookieName, cookieValue, cookieAge) {
         httpOnly: true,
         maxAge: cookieAge,
         sameSite: "none",
-        secure: true,
+        secure: false,
     });
 }
 
