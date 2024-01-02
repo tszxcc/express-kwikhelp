@@ -16,6 +16,7 @@ const originDomains = [
     "http://localhost:3000",
     "http://localhost:5000",
     "https://kwikhelp.bryanc12.net",
+    "https://react-kwikhelp.vercel.app",
 ];
 
 app.use(
