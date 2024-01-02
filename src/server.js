@@ -12,9 +12,15 @@ const port = process.env.PORT || 5000;
 
 const app = express();
 
+const originDomains = [
+    "http://localhost:3000",
+    "http://localhost:5000",
+    "https://kwikhelp.bryanc12.net",
+];
+
 app.use(
     cors({
-        origin: "http://localhost:3000",
+        origin: originDomains,
     })
 );
 
