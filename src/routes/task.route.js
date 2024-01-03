@@ -1,4 +1,6 @@
 const express = require("express");
+const authMiddleware = require("../middlewares/auth.middleware.js");
+
 const taskRouter = express.Router();
 
 const taskController = require("../controllers/task.controller.js");
@@ -24,20 +26,44 @@ const taskController = require("../controllers/task.controller.js");
 // reviewTask,
 // deleteTaskById,
 
-taskRouter.get("/", taskController.getTasks);
-taskRouter.get("/:id", taskController.getTaskById);
-taskRouter.get("/user", taskController.getUserTasks);
-taskRouter.get("/helper", taskController.getHelperTasks);
-taskRouter.get("/helperRequests", taskController.getHelperRequests);
+taskRouter.get("/", authMiddleware.authorize, taskController.getTasks);
+taskRouter.get("/:id", authMiddleware.authorize, taskController.getTaskById);
+taskRouter.get("/user", authMiddleware.authorize, taskController.getUserTasks);
+taskRouter.get(
+    "/helper",
+    authMiddleware.authorize,
+    taskController.getHelperTasks
+);
+taskRouter.get(
+    "/helperRequests",
+    authMiddleware.authorize,
+    taskController.getHelperRequests
+);
 
-taskRouter.post("/create", taskController.createTask);
-taskRouter.post("/request", taskController.requestTask);
-taskRouter.post("/accept", taskController.acceptTask);
-taskRouter.post("/complete", taskController.completeTask);
-taskRouter.post("/confirm", taskController.confirmTask);
-taskRouter.post("/pay", taskController.payTask);
-taskRouter.post("/review", taskController.reviewTask);
+taskRouter.post("/create", authMiddleware.authorize, taskController.createTask);
+taskRouter.post(
+    "/request",
+    authMiddleware.authorize,
+    taskController.requestTask
+);
+taskRouter.post("/accept", authMiddleware.authorize, taskController.acceptTask);
+taskRouter.post(
+    "/complete",
+    authMiddleware.authorize,
+    taskController.completeTask
+);
+taskRouter.post(
+    "/confirm",
+    authMiddleware.authorize,
+    taskController.confirmTask
+);
+taskRouter.post("/pay", authMiddleware.authorize, taskController.payTask);
+taskRouter.post("/review", authMiddleware.authorize, taskController.reviewTask);
 
-taskRouter.delete("/:id", taskController.deleteTaskById);
+taskRouter.delete(
+    "/:id",
+    authMiddleware.authorize,
+    taskController.deleteTaskById
+);
 
 module.exports = taskRouter;
