@@ -1,9 +1,15 @@
+const axios = require("axios");
+
 const taskModel = require("../models/task.model.js");
 const taskRequestModel = require("../models/taskRequest.model.js");
+const paymentBillModel = require("../models/paymentBill.model.js");
 
-const createTask = async (body) => {
+const createTask = async (body, username) => {
     try {
-        const task = await taskModel.create(body.taskData);
+        const task = await taskModel.create({
+            ...body.taskData,
+            username: username,
+        });
         return task;
     } catch (error) {
         return { error: true, message: error.message };
@@ -117,8 +123,67 @@ const confirmTask = async (id, username) => {
     }
 };
 
-const payTask = async (id, username) => {
+const createBill = async (taskId, username, amount) => {
+    const billPlzUrl = "https://www.billplz-sandbox.com/api/v3/bills";
+    const auth = {
+        username: process.env.BILLPLZ_API_KEY,
+        password: "x",
+    };
+    const params = {
+        collection_id: "fvrj_sjj",
+        description: "Payment for task " + taskId,
+        name: username,
+        email: username + "@test.com",
+        amount: amount * 100,
+        callback_url: "https://kwikhelp.bryanc12.net/api/task/callback",
+    };
+
     try {
+        const billResponse = await axios.post(billPlzUrl, null, {
+            auth: auth,
+            params: params,
+        });
+
+        if (billResponse.status !== 200) {
+            return { error: true, message: "Billplz error" };
+        }
+
+        try {
+            const paymentBill = await paymentBillModel.create({
+                billId: billResponse.data.id,
+                taskId: taskId,
+            });
+        } catch (error) {
+            return { error: true, message: error.message };
+        }
+
+        return billResponse.data.id;
+    } catch (error) {
+        return { error: true, message: error.message };
+    }
+};
+
+const attemptPayTask = async (taskId, username, amount) => {
+    try {
+        const billId = await createBill(taskId, username, amount);
+        return billId;
+    } catch (error) {
+        return { error: true, message: error.message };
+    }
+};
+
+const callback = async (billId) => {
+    try {
+        const paymentBill = await paymentBillModel.findOne({
+            billId: billId,
+        });
+
+        const task = await taskModel.findOneAndUpdate(
+            { _id: paymentBill.taskId },
+            { taskStatus: "Paid" }
+        );
+
+        return task;
     } catch (error) {
         return { error: true, message: error.message };
     }
@@ -165,7 +230,8 @@ module.exports = {
     acceptTask,
     completeTask,
     confirmTask,
-    payTask,
+    attemptPayTask,
+    callback,
     reviewTask,
     deleteTaskById,
 };

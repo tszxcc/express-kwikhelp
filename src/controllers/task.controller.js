@@ -15,7 +15,8 @@ const getTasks = async (req, res) => {
 
 const createTask = async (req, res) => {
     const body = req.body;
-    const task = await taskService.createTask(body);
+    const username = req.username;
+    const task = await taskService.createTask(body, username);
 
     if (task.error) {
         res.status(500).json({ message: "Task not created", error: task });
@@ -166,6 +167,18 @@ const deleteTaskById = async (req, res) => {
     res.status(200).json(task);
 };
 
+const callback = async (req, res) => {
+    const { billId } = req.body;
+    const task = await taskService.callback(billId);
+
+    if (task.error) {
+        res.status(500).json({ message: "Task not updated" });
+        return;
+    }
+
+    res.status(200).json(task);
+};
+
 module.exports = {
     getTasks,
     createTask,
@@ -180,4 +193,5 @@ module.exports = {
     payTask,
     reviewTask,
     deleteTaskById,
+    callback,
 };
