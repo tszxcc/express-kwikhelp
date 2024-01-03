@@ -27,13 +27,13 @@ const taskController = require("../controllers/task.controller.js");
 // deleteTaskById,
 
 taskRouter.get("/", authMiddleware.authorize, taskController.getTasks);
-taskRouter.get("/:id", authMiddleware.authorize, taskController.getTaskById);
 taskRouter.get("/user", authMiddleware.authorize, taskController.getUserTasks);
 taskRouter.get(
     "/helper",
     authMiddleware.authorize,
     taskController.getHelperTasks
 );
+taskRouter.get("/:id", authMiddleware.authorize, taskController.getTaskById);
 taskRouter.get(
     "/helperRequests",
     authMiddleware.authorize,

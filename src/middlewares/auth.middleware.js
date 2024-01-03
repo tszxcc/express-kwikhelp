@@ -9,7 +9,6 @@ const responseUtil = require("../utils/response.util.js");
 
 async function authorize(req, res, next) {
     const accessToken = req.cookies[cookieName.accessToken];
-
     // If the access token is not present
     if (!accessToken) {
         const refreshToken = req.cookies[cookieName.refreshToken];
