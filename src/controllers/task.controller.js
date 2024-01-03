@@ -31,6 +31,7 @@ const getUserTasks = async (req, res) => {
     const tasks = await taskService.getUserTasks(username);
 
     if (tasks.error) {
+        console.log(tasks);
         res.status(500).json({ message: "Tasks not found" });
         return;
     }
