@@ -79,7 +79,7 @@ const getTaskById = async (req, res) => {
     const task = await taskService.getTaskById(id);
 
     if (task.error) {
-        res.status(500).json({ message: "Task not found" });
+        res.status(500).json(task);
         return;
     }
 

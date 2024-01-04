@@ -66,7 +66,7 @@ const getHelperRequests = async (username) => {
 
 const getTaskById = async (id) => {
     try {
-        const task = await taskModel.findById({ id: id });
+        const task = await taskModel.findById({ _id: id });
         return task;
     } catch (error) {
         return { error: true, message: error.message };
