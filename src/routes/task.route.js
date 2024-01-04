@@ -33,7 +33,6 @@ taskRouter.get(
     authMiddleware.authorize,
     taskController.getHelperTasks
 );
-taskRouter.get("/:id", authMiddleware.authorize, taskController.getTaskById);
 taskRouter.get(
     "/userRequests",
     authMiddleware.authorize,
@@ -44,6 +43,7 @@ taskRouter.get(
     authMiddleware.authorize,
     taskController.getHelperRequests
 );
+taskRouter.get("/:id", authMiddleware.authorize, taskController.getTaskById);
 
 taskRouter.post("/create", authMiddleware.authorize, taskController.createTask);
 taskRouter.post(

@@ -4,8 +4,8 @@ const router = express.Router();
 const taskRouter = require("./task.route.js");
 const authRouter = require("./auth.route.js");
 const adminRouter = require("./admin.route.js");
+const profileRouter = require("./profile.route.js");
 
-const profileRouter = require("./profileRoutes.js");
 const serviceRouter = require("./serviceRoutes.js");
 
 const routes = [
