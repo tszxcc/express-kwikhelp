@@ -75,12 +75,12 @@ const getTaskById = async (req, res) => {
 };
 
 const requestTask = async (req, res) => {
-    const username = req.username;
-    const { taskId, helper } = req.body;
+    const helper = req.username;
+    const { taskId, username } = req.body;
     const task = await taskService.requestTask(taskId, username, helper);
 
     if (task.error) {
-        res.status(500).json({ message: "Task not requested" });
+        res.status(500).json(task);
         return;
     }
 
@@ -127,11 +127,11 @@ const confirmTask = async (req, res) => {
 };
 
 const payTask = async (req, res) => {
-    res.status(123).json({ message: "Endpoint Building" });
+    // res.status(123).json({ message: "Endpoint Building" });
 
     const username = req.username;
-    const { taskId } = req.body;
-    const task = await taskService.payTask(taskId, username);
+    const { taskId, amount } = req.body;
+    const task = await taskService.attemptPayTask(taskId, username, amount);
 
     if (task.error) {
         res.status(500).json({ message: "Task not paid" });
@@ -168,11 +168,12 @@ const deleteTaskById = async (req, res) => {
 };
 
 const callback = async (req, res) => {
+    console.log("callback");
     const { billId } = req.body;
     const task = await taskService.callback(billId);
 
     if (task.error) {
-        res.status(500).json({ message: "Task not updated" });
+        res.status(500).json(task);
         return;
     }
 

@@ -74,21 +74,21 @@ const requestTask = async (id, username, helper) => {
     }
 };
 
-const acceptTask = async (id, username, helper) => {
+const acceptTask = async (taskId, username, helper) => {
     try {
         const task = await taskModel.findOneAndUpdate(
-            { _id: id, username: username, taskStatus: "Open" },
+            { _id: taskId, username: username, taskStatus: "Open" },
             { helper: helper, taskStatus: "Accepted" }
         );
 
         const taskRequest = await taskRequestModel.findOneAndUpdate(
-            { taskID: id, username: username, helper: helper },
+            { taskID: taskId, username: username, helper: helper },
             { requestStatus: "Accepted" }
         );
 
         // remove else
         const taskRequestRemoved = await taskRequestModel.deleteMany({
-            taskID: id,
+            taskID: taskId,
             username: username,
             requestStatus: "Pending",
         });
@@ -174,6 +174,7 @@ const attemptPayTask = async (taskId, username, amount) => {
 
 const callback = async (billId) => {
     try {
+        console.log(billId);
         const paymentBill = await paymentBillModel.findOne({
             billId: billId,
         });
