@@ -216,11 +216,14 @@ const reviewTask = async (id, username, rate) => {
 
 const deleteTaskById = async (id, username) => {
     try {
-        const task = await taskModel.findOneAndDelete({
-            _id: id,
-            username: username,
-            taskStatus: "Open",
-        });
+        const task = await taskModel.findOneAndUpdate(
+            {
+                _id: id,
+                username: username,
+                taskStatus: "Open",
+            },
+            { taskStatus: "Deleted" }
+        );
 
         const taskRequest = await taskRequestModel.deleteMany({
             taskID: id,

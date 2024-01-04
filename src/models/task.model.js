@@ -53,10 +53,11 @@ const taskSchema = mongoose.Schema(
         },
         taskStatus: {
             type: String,
-            default: "Open", // Open, Accepted, Completed, Confirmed, Paid, Reviewed
+            default: "Open", // Open, Accepted, Completed, Confirmed, Paid, Reviewed, Deleted
         },
         review: {
             type: String,
+            default: "",
         },
     },
     {
