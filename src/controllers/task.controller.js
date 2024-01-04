@@ -168,8 +168,7 @@ const deleteTaskById = async (req, res) => {
 };
 
 const callback = async (req, res) => {
-    console.log("callback");
-    const { billId } = req.body;
+    const billId = req.query.billId;
     const task = await taskService.callback(billId);
 
     if (task.error) {
