@@ -45,7 +45,10 @@ const getHelperTasks = async (username) => {
 
 const getUserRequests = async (username) => {
     try {
-        const tasks = await taskRequestModel.find({ username: username });
+        const tasks = await taskRequestModel.find({
+            username: username,
+            requestStatus: "Pending",
+        });
         return tasks;
     } catch (error) {
         return { error: true, message: error.message };
