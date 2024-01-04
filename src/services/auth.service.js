@@ -4,7 +4,7 @@ const Credential = require("../models/credential.model.js");
 const bcrypt = require("bcrypt");
 const crypto = require("node:crypto");
 
-async function registerUser(username, password, role, email, phone) {
+async function registerUser(username, password, role, email, phoneNumber) {
     const pepper = generatePepper();
     const passwordHash = hashPassword(password, pepper);
 
@@ -14,7 +14,7 @@ async function registerUser(username, password, role, email, phone) {
         passwordHash: passwordHash,
         pepper: pepper,
         email: email,
-        phone: phone,
+        phone: phoneNumber,
     });
 
     await credential.save();

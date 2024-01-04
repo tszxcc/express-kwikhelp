@@ -136,6 +136,7 @@ const createBill = async (taskId, username, amount) => {
         email: username + "@test.com",
         amount: amount * 100,
         callback_url: "https://kwikhelp.bryanc12.net/api/task/callback",
+        redirect_url: "https://kwikhelp.bryanc12.net/taskhistory",
     };
 
     try {

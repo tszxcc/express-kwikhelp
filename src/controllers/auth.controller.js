@@ -58,7 +58,7 @@ async function login(req, res) {
 }
 
 async function register(req, res) {
-    const { username, email, password, confirmPassword, phone, role } =
+    const { username, email, password, confirmPassword, phoneNumber, role } =
         req.body;
 
     if (
@@ -66,7 +66,7 @@ async function register(req, res) {
         !email ||
         !password ||
         !confirmPassword ||
-        !phone ||
+        !phoneNumber ||
         !role
     ) {
         res.status(httpStatus.BAD_USER_INPUT);
@@ -97,7 +97,13 @@ async function register(req, res) {
     }
 
     if (
-        await authService.registerUser(username, password, role, email, phone)
+        await authService.registerUser(
+            username,
+            password,
+            role,
+            email,
+            phoneNumber
+        )
     ) {
         res.status(httpStatus.OK);
         res.end();
