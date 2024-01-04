@@ -174,7 +174,6 @@ const attemptPayTask = async (taskId, username, amount) => {
 
 const callback = async (billId) => {
     try {
-        console.log(billId);
         const paymentBill = await paymentBillModel.findOne({
             billId: billId,
         });
