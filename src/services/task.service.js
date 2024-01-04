@@ -43,6 +43,15 @@ const getHelperTasks = async (username) => {
     }
 };
 
+const getUserRequests = async (username) => {
+    try {
+        const tasks = await taskRequestModel.find({ username: username });
+        return tasks;
+    } catch (error) {
+        return { error: true, message: error.message };
+    }
+};
+
 const getHelperRequests = async (username) => {
     try {
         const tasks = await taskRequestModel.find({ helper: username });
@@ -225,6 +234,7 @@ module.exports = {
     getAllTasks,
     getUserTasks,
     getHelperTasks,
+    getUserRequests,
     getHelperRequests,
     getTaskById,
     requestTask,

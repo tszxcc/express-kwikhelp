@@ -35,6 +35,11 @@ taskRouter.get(
 );
 taskRouter.get("/:id", authMiddleware.authorize, taskController.getTaskById);
 taskRouter.get(
+    "/userRequests",
+    authMiddleware.authorize,
+    taskController.getUserRequests
+);
+taskRouter.get(
     "/helperRequests",
     authMiddleware.authorize,
     taskController.getHelperRequests

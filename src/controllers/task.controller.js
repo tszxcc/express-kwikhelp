@@ -50,6 +50,18 @@ const getHelperTasks = async (req, res) => {
     res.status(200).json(tasks);
 };
 
+const getUserRequests = async (req, res) => {
+    const username = req.username;
+    const tasks = await taskService.getUserRequests(username);
+
+    if (tasks.error) {
+        res.status(500).json(tasks);
+        return;
+    }
+
+    res.status(200).json(tasks);
+};
+
 const getHelperRequests = async (req, res) => {
     const username = req.username;
     const tasks = await taskService.getHelperRequests(username);
@@ -185,6 +197,7 @@ module.exports = {
     createTask,
     getUserTasks,
     getHelperTasks,
+    getUserRequests,
     getHelperRequests,
     getTaskById,
     requestTask,
