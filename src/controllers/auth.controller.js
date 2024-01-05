@@ -48,7 +48,7 @@ async function login(req, res) {
             1000 * 60 * 60
         );
 
-        res.status(httpStatus.OK);
+        res.status(httpStatus.OK).json(loginSuccess);
     } else {
         // if login failed, send 401
         res.status(httpStatus.UNAUTHORIZED);
