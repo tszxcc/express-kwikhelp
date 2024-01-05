@@ -24,7 +24,23 @@ const credential = mongoose.Schema(
         },
         phone: {
             type: String,
-            required: [true, "Please add a text value to the phone"],
+            default: "",
+        },
+        description: {
+            type: String,
+            default: "",
+        },
+        fullName: {
+            type: String,
+            default: "",
+        },
+        profilePic: {
+            type: String,
+            default: "",
+        },
+        resume: {
+            type: String,
+            default: "",
         },
     },
     {

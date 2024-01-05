@@ -105,6 +105,15 @@ async function register(req, res) {
             phoneNumber
         )
     ) {
+        const refreshToken = await authService.createRefreshToken(username);
+
+        responseUtil.addCookie(
+            res,
+            cookieName.refreshToken,
+            refreshToken,
+            1000 * 60 * 60 * 24 * 7
+        );
+
         res.status(httpStatus.OK);
         res.end();
         return;

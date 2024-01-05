@@ -76,6 +76,7 @@ const getHelperRequests = async (req, res) => {
 
 const getTaskById = async (req, res) => {
     const { id } = req.params;
+
     const task = await taskService.getTaskById(id);
 
     if (task.error) {
