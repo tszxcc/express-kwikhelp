@@ -158,6 +158,7 @@ const createBill = async (taskId, username, amount) => {
         });
 
         if (billResponse.status !== 200) {
+            console.log("Billplz error");
             return { error: true, message: "Billplz error" };
         }
 
@@ -167,6 +168,7 @@ const createBill = async (taskId, username, amount) => {
                 taskId: taskId,
             });
         } catch (error) {
+            console.log("Payment bill db error");
             return { error: true, message: error.message };
         }
 
