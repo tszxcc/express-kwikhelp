@@ -62,6 +62,7 @@ const getProfilePic = async (req, res) => {
     console.log("getProfilePic naming");
 
     minioClient.getObject("kwikhelp", profilePic, function (error, stream) {
+        console.log("getProfilePic in minio");
         if (error) {
             console.log("getProfilePic error get photo");
             res.status(500).json({
