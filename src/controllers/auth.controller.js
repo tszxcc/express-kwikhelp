@@ -3,6 +3,7 @@ const httpStatus = require("../constants/httpStatus.constant.js");
 const cookieName = require("../configs/cookieName.config.js");
 
 const authService = require("../services/auth.service.js");
+const emailService = require("../services/mail.service.js");
 
 const accessTokenUtil = require("../utils/accessToken.util.js");
 const responseUtil = require("../utils/response.util.js");
@@ -179,6 +180,92 @@ function check(req, res) {
     res.end();
 }
 
+async function recover(req, res) {
+    const { username } = req.body;
+
+    if (!username) {
+        res.status(httpStatus.BAD_USER_INPUT);
+
+        res.send({ message: "Missing field/s" });
+        return;
+    }
+
+    if (!(await authService.userExist(username))) {
+        res.status(httpStatus.BAD_USER_INPUT);
+
+        res.send({ message: "Username doesn't exist" });
+        return;
+    }
+
+    const userEmail = await authService.getUserEmail(username);
+
+    if (!userEmail) {
+        res.status(httpStatus.BAD_USER_INPUT);
+        res.send({ message: "User email not found" });
+        return;
+    }
+
+    const recoverToken = await accessTokenUtil.generateAccessToken(
+        username,
+        "recover",
+        "5m"
+    );
+
+    try {
+        // email, username, token;
+        await emailService.sendMail(userEmail, username, recoverToken);
+
+        res.status(httpStatus.OK);
+        res.end();
+        return;
+    } catch (error) {
+        res.status(httpStatus.INTERNAL_SERVER_ERROR);
+        res.end();
+        return;
+    }
+}
+
+async function reset(req, res) {
+    const { password, confirmPassword, token } = req.body;
+
+    if (!password || !confirmPassword || !token) {
+        res.status(httpStatus.BAD_USER_INPUT);
+
+        res.send({ message: "Missing field/s" });
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        res.status(httpStatus.BAD_USER_INPUT);
+
+        res.send({ message: "Passwords do not match" });
+        return;
+    }
+
+    const tokenPayload = accessTokenUtil.verifyAccessToken(token);
+
+    if (!tokenPayload) {
+        res.status(httpStatus.BAD_USER_INPUT);
+
+        res.send({ message: "Token not valid" });
+        return;
+    }
+
+    const replacePassword = await authService.replacePassword(
+        tokenPayload.username,
+        password
+    );
+
+    if (!replacePassword) {
+        res.status(httpStatus.INTERNAL_SERVER_ERROR);
+        res.end();
+        return;
+    }
+
+    res.status(httpStatus.OK);
+    res.end();
+}
+
 module.exports = {
     login,
     register,
@@ -186,4 +273,6 @@ module.exports = {
     access,
     refresh,
     check,
+    recover,
+    reset,
 };

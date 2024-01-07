@@ -1,8 +1,11 @@
 const Token = require("../models/token.model.js");
 const Credential = require("../models/credential.model.js");
 
+const accessTokenUtil = require("../utils/accessToken.util.js");
+
 const bcrypt = require("bcrypt");
 const crypto = require("node:crypto");
+const { access } = require("node:fs");
 
 async function registerUser(username, password, role, email, phoneNumber) {
     const pepper = generatePepper();
@@ -38,6 +41,25 @@ async function loginUser(username, password) {
     }
 
     return false;
+}
+
+async function replacePassword(username, password) {
+    const pepper = generatePepper();
+    const passwordHash = hashPassword(password, pepper);
+
+    const credential = await Credential.findOneAndUpdate(
+        { username: username },
+        {
+            passwordHash: passwordHash,
+            pepper: pepper,
+        }
+    );
+
+    if (!credential) {
+        return false;
+    }
+
+    return true;
 }
 
 async function refreshTokenExist(token) {
@@ -168,12 +190,26 @@ async function getUserPasswordHash(username) {
     };
 }
 
+async function getUserEmail(username) {
+    const response = await Credential.findOne({ username: username }).select(
+        "email"
+    );
+
+    if (!response) {
+        return false;
+    }
+
+    return response.email;
+}
+
 module.exports = {
     userExist,
     registerUser,
     loginUser,
+    replacePassword,
     refreshTokenExist,
     createRefreshToken,
     revokeRefreshToken,
     generatePepper,
+    getUserEmail,
 };

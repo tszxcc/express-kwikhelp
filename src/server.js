@@ -31,8 +31,6 @@ app.use(cookieParser());
 // have to use this to get req.body or else it will be undefined or body data will be empty
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-// multer for form-data
-app.use(multer().array());
 
 app.use("/api", routes);
 

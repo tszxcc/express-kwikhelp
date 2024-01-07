@@ -5,8 +5,7 @@ const taskRouter = require("./task.route.js");
 const authRouter = require("./auth.route.js");
 const adminRouter = require("./admin.route.js");
 const profileRouter = require("./profile.route.js");
-
-const serviceRouter = require("./serviceRoutes.js");
+const serviceRouter = require("./service.route.js");
 
 const routes = [
     {

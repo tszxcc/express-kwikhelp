@@ -55,14 +55,14 @@ const getProfilePic = async (username) => {
     }
 };
 
-const setProfilePic = async (username, profilePicId) => {
+const setProfilePic = async (username, profilePicUrl) => {
     try {
         const profilePic = await Credential.findOneAndUpdate(
             {
                 username: username,
             },
             {
-                profilePic: profilePicId,
+                profilePic: profilePicUrl,
             }
         );
 
@@ -80,12 +80,29 @@ const getResume = async (username) => {
             resume: 1,
             _id: 0,
         });
+
+        return resume;
     } catch (err) {
         return { error: true, message: err.message };
     }
 };
 
-const setResume = async (username, body) => {};
+const setResume = async (username, resumeUrl) => {
+    try {
+        const resume = await Credential.findOneAndUpdate(
+            {
+                username: username,
+            },
+            {
+                resume: resumeUrl,
+            }
+        );
+
+        return resume;
+    } catch (err) {
+        return { error: true, message: err.message };
+    }
+};
 
 module.exports = {
     getProfile,

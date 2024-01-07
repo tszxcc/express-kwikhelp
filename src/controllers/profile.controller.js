@@ -1,4 +1,5 @@
 const profileService = require("../services/profile.service.js");
+const minioClient = require("../services/minio.service.js");
 
 const getProfile = async (req, res) => {
     const username = req.username;
@@ -34,37 +35,85 @@ const setProfile = async (req, res) => {
     res.status(200).json(profile);
 };
 
+const generateRandomString = () => {
+    const length = 20;
+    const chars =
+        "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let result = "";
+    for (let i = length; i > 0; --i) {
+        result += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return result;
+};
+
 const getProfilePic = async (req, res) => {
     const username = req.username;
-    const profilePic = await profileService.getProfilePic(username);
 
-    if (profilePic.error) {
-        res.status(500).json(profilePic);
+    const profile = await profileService.getProfilePic(username);
+    if (profile.error || !profile.profilePic || profile.profilePic === "") {
+        res.status(500).json("Profile picture not found");
         return;
     }
 
-    res.status(200).json(JSON.parse(profilePic));
+    const profilePic = profile.profilePic;
+
+    minioClient.getObject("kwikhelp", profilePic, function (error, stream) {
+        if (error) {
+            res.status(500).json({
+                error: true,
+                message: "Error retrieving profile picture",
+            });
+            return;
+        }
+
+        stream.pipe(res);
+    });
 };
 
 const setProfilePic = async (req, res) => {
     const username = req.username;
-    // const profilePicId = req.file.id;
+    const file = req.file;
+    var fileName;
 
-    if (!req.files) {
+    if (!file) {
         res.status(400).json({
             error: true,
-            message: "Missing required image",
+            message: "Missing file",
         });
         return;
     }
 
-    const profilePic = await profileService.setProfilePic(
-        username
-        // profilePicId
-    );
+    if (file.mimetype !== "image/png" && file.mimetype !== "image/jpeg") {
+        res.status(400).json({
+            error: true,
+            message: "Invalid file type",
+        });
+        return;
+    }
 
-    if (profilePic.error) {
-        res.status(500).json(profilePic);
+    const randomString = generateRandomString();
+
+    if (file.mimetype === "image/png") {
+        fileName = randomString + ".png";
+    }
+
+    if (file.mimetype === "image/jpeg") {
+        fileName = randomString + ".jpeg";
+    }
+
+    minioClient.putObject("kwikhelp", fileName, file.buffer, function (error) {
+        if (error) {
+            res.status(500).json({
+                error: true,
+                message: error,
+            });
+            return;
+        }
+    });
+
+    const profile = await profileService.setProfilePic(username, fileName);
+    if (profile.error) {
+        res.status(500).json(profile);
         return;
     }
 
@@ -74,36 +123,66 @@ const setProfilePic = async (req, res) => {
 
 const getResume = async (req, res) => {
     const username = req.username;
-    const role = req.role;
 
-    if (role !== "helper") {
-        res.status(403).json({
-            error: true,
-            message: "Forbidden",
-        });
+    const profile = await profileService.getResume(username);
+    if (profile.error || !profile.resume || profile.resume === "") {
+        res.status(500).json("Resume not found");
         return;
     }
 
-    const resume = await profileService.getResume(username);
+    const resume = profile.resume;
 
-    if (resume.error) {
-        res.status(500).json(resume);
-        return;
-    }
+    minioClient.getObject("kwikhelp", resume, function (error, stream) {
+        if (error) {
+            res.status(500).json({
+                error: true,
+                message: "Error retrieving resume",
+            });
+            return;
+        }
 
-    res.status(200);
-    res.end();
+        stream.pipe(res);
+    });
 };
 
 const setResume = async (req, res) => {
     const username = req.username;
-    const role = req.role;
+    const file = req.file;
+    var fileName;
 
-    if (role !== "helper") {
-        res.status(403).json({
+    if (!file) {
+        res.status(400).json({
             error: true,
-            message: "Forbidden",
+            message: "Missing file",
         });
+        return;
+    }
+
+    if (file.mimetype !== "application/pdf") {
+        res.status(400).json({
+            error: true,
+            message: "Invalid file type",
+        });
+        return;
+    }
+
+    const randomString = generateRandomString();
+    fileName = randomString + ".pdf";
+
+    minioClient.putObject("kwikhelp", fileName, file.buffer, function (error) {
+        if (error) {
+            res.status(500).json({
+                error: true,
+                message: error,
+            });
+            return;
+        }
+    });
+
+    const profile = await profileService.setResume(username, fileName);
+
+    if (profile.error) {
+        res.status(500).json(profile);
         return;
     }
 
