@@ -50,24 +50,16 @@ const getProfilePic = async (req, res) => {
     const username = req.username;
 
     const profile = await profileService.getProfilePic(username);
-    console.log("getProfilePic");
 
     if (profile.error || !profile.profilePic || profile.profilePic === "") {
         res.status(500).json("Profile picture not found");
-        console.log("getProfilePic not found");
         return;
     }
 
     const profilePic = profile.profilePic;
-    console.log("getProfilePic naming");
-
-    console.log(process.env.MINIO_ACCESS_KEY);
-    console.log(process.env.MINIO_SECRET_KEY);
 
     minioClient.getObject("kwikhelp", profilePic, function (error, stream) {
-        console.log("getProfilePic in minio");
         if (error) {
-            console.log("getProfilePic error get photo");
             res.status(500).json({
                 error: true,
                 message: "Error retrieving profile picture",
@@ -75,9 +67,7 @@ const getProfilePic = async (req, res) => {
             return;
         }
 
-        console.log("getProfilePic success get photo");
         stream.pipe(res);
-        console.log("getProfilePic piping");
     });
 };
 
