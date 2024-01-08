@@ -8,6 +8,16 @@ const profileController = require("../controllers/profile.controller.js");
 router.get("/", authMiddleware.authorize, profileController.getProfile);
 router.get("/image", authMiddleware.authorize, profileController.getProfilePic);
 router.get("/resume", authMiddleware.authorize, profileController.getResume);
+router.get(
+    "/image/:username",
+    authMiddleware.authorize,
+    profileController.getProfilePicByUsername
+);
+router.get(
+    "/resume/:username",
+    authMiddleware.authorize,
+    profileController.getResumeByUsername
+);
 
 router.post("/", authMiddleware.authorize, profileController.setProfile);
 

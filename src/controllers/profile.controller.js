@@ -191,6 +191,55 @@ const setResume = async (req, res) => {
     res.end();
 };
 
+const getProfilePicByUsername = async (req, res) => {
+    const { username } = req.params;
+
+    const profile = await profileService.getProfilePic(username);
+
+    if (profile.error || !profile.profilePic || profile.profilePic === "") {
+        res.status(500).json("Profile picture not found");
+        return;
+    }
+
+    const profilePic = profile.profilePic;
+
+    minioClient.getObject("kwikhelp", profilePic, function (error, stream) {
+        if (error) {
+            res.status(500).json({
+                error: true,
+                message: "Error retrieving profile picture",
+            });
+            return;
+        }
+
+        stream.pipe(res);
+    });
+};
+
+const getResumeByUsername = async (req, res) => {
+    const { username } = req.params;
+
+    const profile = await profileService.getResume(username);
+    if (profile.error || !profile.resume || profile.resume === "") {
+        res.status(500).json("Resume not found");
+        return;
+    }
+
+    const resume = profile.resume;
+
+    minioClient.getObject("kwikhelp", resume, function (error, stream) {
+        if (error) {
+            res.status(500).json({
+                error: true,
+                message: "Error retrieving resume",
+            });
+            return;
+        }
+
+        stream.pipe(res);
+    });
+};
+
 module.exports = {
     getProfile,
     setProfile,
@@ -198,4 +247,6 @@ module.exports = {
     setProfilePic,
     getResume,
     setResume,
+    getProfilePicByUsername,
+    getResumeByUsername,
 };
