@@ -142,7 +142,7 @@ const createBill = async (taskId, username, amount) => {
         password: "x",
     };
     const params = {
-        collection_id: "fvrj_sjj",
+        collection_id: "5aegnbqv",
         description: "Payment for task " + taskId,
         name: username,
         email: username + "@test.com",

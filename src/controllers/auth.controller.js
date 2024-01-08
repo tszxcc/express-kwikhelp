@@ -251,6 +251,13 @@ async function reset(req, res) {
         return;
     }
 
+    if (tokenPayload.role !== "recover") {
+        res.status(httpStatus.BAD_USER_INPUT);
+
+        res.send({ message: "Token not valid" });
+        return;
+    }
+
     const replacePassword = await authService.replacePassword(
         tokenPayload.username,
         password
