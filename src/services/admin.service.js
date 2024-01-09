@@ -30,13 +30,14 @@ const getTaskCount = async () => {
 
 const getTransactionCount = async () => {
     try {
-        var count;
-        count =
-            count + (await taskModel.countDocuments({ taskStatus: "Paid" }));
+        const paidCount = await taskModel.countDocuments({
+            taskStatus: "Paid",
+        });
+        const reviewedCount = await taskModel.countDocuments({
+            taskStatus: "Reviewed",
+        });
+        const count = paidCount + reviewedCount;
 
-        count =
-            count +
-            (await taskModel.countDocuments({ taskStatus: "Reviewed" }));
         return count;
     } catch (error) {
         throw new Error(error.message);
