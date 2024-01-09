@@ -118,10 +118,12 @@ const acceptTask = async (taskId, username, helper) => {
 
 const rejectTask = async (taskId, username, helper) => {
     try {
+        console.log(taskId, username, helper);
         const task = await taskRequestModel.deleteMany({
             taskID: taskId,
             username: username,
             helper: helper,
+            requestStatus: "Pending",
         });
 
         return task;
