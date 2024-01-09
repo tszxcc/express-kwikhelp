@@ -13,6 +13,18 @@ const getProfile = async (req, res) => {
     res.status(200).json(profile);
 };
 
+const getProfileByUsername = async (req, res) => {
+    const { username } = req.params;
+    const profile = await profileService.getProfile(username);
+
+    if (profile.error) {
+        res.status(500).json(profile);
+        return;
+    }
+
+    res.status(200).json(profile);
+};
+
 const setProfile = async (req, res) => {
     const username = req.username;
     const { email, phone, description, fullName } = req.body;
@@ -242,6 +254,7 @@ const getResumeByUsername = async (req, res) => {
 
 module.exports = {
     getProfile,
+    getProfileByUsername,
     setProfile,
     getProfilePic,
     setProfilePic,

@@ -18,6 +18,11 @@ router.get(
     authMiddleware.authorize,
     profileController.getResumeByUsername
 );
+router.get(
+    "/:username",
+    authMiddleware.authorize,
+    profileController.getProfileByUsername
+);
 
 router.post("/", authMiddleware.authorize, profileController.setProfile);
 

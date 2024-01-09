@@ -4,6 +4,7 @@ const serviceController = require("../controllers/service.controller.js");
 
 router.get("/", serviceController.getService);
 
+// router.post("/", serviceController.addService);
 // router.route("/").get(getService).post(setService);
 
 // router.get("/", (req, res) => {
