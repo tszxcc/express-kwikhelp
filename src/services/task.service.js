@@ -67,6 +67,11 @@ const getHelperRequests = async (username) => {
 const getTaskById = async (id) => {
     try {
         const task = await taskModel.findById({ _id: id });
+
+        if (!task) {
+            return { error: true, message: "Task not found with this id" };
+        }
+
         return task;
     } catch (error) {
         return { error: true, message: error.message };
@@ -106,6 +111,20 @@ const acceptTask = async (taskId, username, helper) => {
         });
 
         return { task, taskRequest, taskRequestRemoved };
+    } catch (error) {
+        return { error: true, message: error.message };
+    }
+};
+
+const rejectTask = async (taskId, username, helper) => {
+    try {
+        const task = await taskRequestModel.deleteMany({
+            taskID: taskId,
+            username: username,
+            helper: helper,
+        });
+
+        return task;
     } catch (error) {
         return { error: true, message: error.message };
     }
@@ -247,6 +266,7 @@ module.exports = {
     getTaskById,
     requestTask,
     acceptTask,
+    rejectTask,
     completeTask,
     confirmTask,
     attemptPayTask,

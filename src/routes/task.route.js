@@ -52,6 +52,7 @@ taskRouter.post(
     taskController.requestTask
 );
 taskRouter.post("/accept", authMiddleware.authorize, taskController.acceptTask);
+taskRouter.post("/reject", authMiddleware.authorize, taskController.rejectTask);
 taskRouter.post(
     "/complete",
     authMiddleware.authorize,

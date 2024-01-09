@@ -113,6 +113,19 @@ const acceptTask = async (req, res) => {
     res.status(200).json(task);
 };
 
+const rejectTask = async (req, res) => {
+    const username = req.username;
+    const { taskId, helper } = req.body;
+    const task = await taskService.rejectTask(taskId, username, helper);
+
+    if (task.error) {
+        res.status(500).json({ message: "Task not rejected" });
+        return;
+    }
+
+    res.status(200).json(task);
+};
+
 const completeTask = async (req, res) => {
     const username = req.username;
     const { taskId } = req.body;
@@ -203,6 +216,7 @@ module.exports = {
     getTaskById,
     requestTask,
     acceptTask,
+    rejectTask,
     completeTask,
     confirmTask,
     payTask,
